@@ -16,7 +16,7 @@ import {
   X,
   Menu
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const fadeIn = {
   initial: { opacity: 0, y: 10 },
@@ -27,6 +27,24 @@ const fadeIn = {
 
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    function importHotmart() {
+      // Check if already imported
+      if (document.querySelector('script[src*="hotmart.com"]')) return;
+
+      const imported = document.createElement('script');
+      imported.src = 'https://static.hotmart.com/checkout/widget.min.js';
+      document.head.appendChild(imported);
+      
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = 'https://static.hotmart.com/css/hotmart-fb.min.css';
+      document.head.appendChild(link);
+    }
+    importHotmart();
+  }, []);
 
   return (
     <div className="min-h-screen bg-brand-black text-brand-bone font-sans overflow-x-hidden rustic-grain">
@@ -49,9 +67,9 @@ export default function App() {
         <div className="hidden md:flex gap-8 items-center font-display text-xl uppercase tracking-widest">
           <a href="#manifiesto" className="hover:text-brand-brown transition-colors">Manifiesto</a>
           <a href="#desafio" className="hover:text-brand-brown transition-colors">Desafío</a>
-          <button className="px-6 py-2 bg-brand-bone text-brand-black font-bold hover:bg-brand-brown hover:text-white transition-all">
+          <a href="https://pay.hotmart.com/W105526885V?off=qmsrqdaf" className="px-6 py-2 bg-brand-bone text-brand-black font-bold hover:bg-brand-brown hover:text-white transition-all">
             Comprar ahora
-          </button>
+          </a>
         </div>
       </nav>
 
@@ -60,7 +78,7 @@ export default function App() {
         <div className="fixed inset-0 z-40 bg-brand-black flex flex-col items-center justify-center gap-8 font-display text-4xl uppercase p-10">
           <a href="#manifiesto" onClick={() => setMobileMenuOpen(false)}>Manifiesto</a>
           <a href="#desafio" onClick={() => setMobileMenuOpen(false)}>Desafío</a>
-          <button className="btn-brutal w-full mt-4">Comprar ahora</button>
+          <a href="https://pay.hotmart.com/W105526885V?off=qmsrqdaf" className="btn-brutal w-full mt-4 text-center">Comprar ahora</a>
         </div>
       )}      {/* Hero Section */}
       <section className="relative min-h-screen flex flex-col items-center justify-center pb-20 px-6 pt-32 overflow-hidden border-b-8 border-brand-brown">
@@ -107,10 +125,10 @@ export default function App() {
             transition={{ duration: 0.6, delay: 0.8 }}
             className="flex justify-center"
           >
-            <button className="btn-brutal px-12 py-8 text-2xl md:text-4xl group">
+            <a href="https://pay.hotmart.com/W105526885V?off=qmsrqdaf" className="btn-brutal px-12 py-8 text-2xl md:text-4xl group">
               QUIERO RECUPERAR MI DISEÑO ORIGINAL
               <ArrowRight size={40} className="group-hover:translate-x-4 transition-transform hidden md:block" />
-            </button>
+            </a>
           </motion.div>
         </div>
       </section>
@@ -219,7 +237,7 @@ export default function App() {
                  <p className="text-xl text-neutral-500 font-light italic">
                     "Has estado desarmado ante el mundo. Es hora de recuperar tu arsenal biológico."
                  </p>
-                 <button className="btn-brutal w-full">RECLAMAR COPIA</button>
+                 <a href="https://pay.hotmart.com/W105526885V?off=qmsrqdaf" className="btn-brutal w-full text-center">RECLAMAR COPIA</a>
               </div>
             </div>
 
@@ -277,9 +295,9 @@ export default function App() {
               Al día 30, no serás perfecto, pero por primera vez en años, serás un hombre que se reconoce en el espejo.
             </p>
 
-            <button className="btn-brutal w-full md:w-auto text-3xl px-16 py-8">
+            <a href="https://pay.hotmart.com/W105526885V?off=qmsrqdaf" className="btn-brutal w-full md:w-auto text-3xl px-16 py-8 text-center">
               RECLAMAR MI PROTOCOLO
-            </button>
+            </a>
           </motion.div>
         </div>
       </section>
@@ -301,9 +319,20 @@ export default function App() {
             "No es el precio de un libro. <br /> Es el precio de <span className="italic underline decoration-4 underline-offset-8">dejar de dar lástima.</span>"
           </p>
 
-          <button className="w-full md:w-auto px-12 py-8 bg-brand-black text-brand-bone font-display text-4xl hover:scale-105 transition-transform duration-300">
+          <a href="https://pay.hotmart.com/W105526885V?off=qmsrqdaf" className="w-full md:w-auto px-12 py-8 bg-brand-black text-brand-bone font-display text-4xl hover:scale-105 transition-transform duration-300 text-center flex items-center justify-center">
             QUIERO RECUPERAR MI DISEÑO ORIGINAL
-          </button>
+          </a>
+
+          <div className="mt-8 flex justify-center">
+            {/* Hotmart Checkout Widget */}
+            <a 
+              onClick={(e) => e.preventDefault()} 
+              href="https://pay.hotmart.com/W105526885V?checkoutMode=2&off=qmsrqdaf" 
+              className="hotmart-fb hotmart__button-checkout"
+            >
+              Comprar ahora
+            </a>
+          </div>
         </div>
       </section>
 
