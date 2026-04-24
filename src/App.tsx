@@ -10,379 +10,285 @@ import {
   Flame, 
   Dna, 
   Users, 
-  CheckCircle2, 
   ArrowRight,
-  ChevronDown,
-  X,
-  Menu
+  PlayCircle,
+  Clock
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const fadeIn = {
-  initial: { opacity: 0, y: 10 },
+  initial: { opacity: 0, y: 15 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true },
-  transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
+  viewport: { once: true, margin: "-50px" },
+  transition: { duration: 0.5, ease: "easeOut" }
 };
 
 export default function App() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(15 * 60);
 
   useEffect(() => {
-    function importHotmart() {
-      // Check if already imported
-      if (document.querySelector('script[src*="hotmart.com"]')) return;
-
-      const imported = document.createElement('script');
-      imported.src = 'https://static.hotmart.com/checkout/widget.min.js';
-      document.head.appendChild(imported);
-      
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.type = 'text/css';
-      link.href = 'https://static.hotmart.com/css/hotmart-fb.min.css';
-      document.head.appendChild(link);
-    }
-    importHotmart();
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timer);
   }, []);
 
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  const timeString = `00:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
   return (
-    <div className="min-h-screen bg-brand-black text-brand-bone font-sans overflow-x-hidden rustic-grain">
-      {/* Navbar */}
-      <nav 
-        id="navbar"
-        className="fixed top-0 w-full z-50 px-5 py-4 flex justify-between items-center bg-brand-black/95 border-b-2 border-brand-bone/10"
-      >
-        <div className="font-display text-3xl tracking-tighter uppercase">
-          El Fin del <span className="text-brand-brown">Hombre Blando</span>
-        </div>
-        
-        <button 
-          className="md:hidden text-brand-bone"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-        </button>
-
-        <div className="hidden md:flex gap-8 items-center font-display text-xl uppercase tracking-widest">
-          <a href="#manifiesto" className="hover:text-brand-brown transition-colors">Manifiesto</a>
-          <a href="#desafio" className="hover:text-brand-brown transition-colors">Desafío</a>
-          <a href="https://pay.hotmart.com/W105526885V?off=qmsrqdaf" className="px-6 py-2 bg-brand-bone text-brand-black font-bold hover:bg-brand-brown hover:text-white transition-all">
-            Comprar ahora
-          </a>
-        </div>
-      </nav>
-
-      {/* Mobile Menu Overlay */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-brand-black flex flex-col items-center justify-center gap-8 font-display text-4xl uppercase p-10">
-          <a href="#manifiesto" onClick={() => setMobileMenuOpen(false)}>Manifiesto</a>
-          <a href="#desafio" onClick={() => setMobileMenuOpen(false)}>Desafío</a>
-          <a href="https://pay.hotmart.com/W105526885V?off=qmsrqdaf" className="btn-brutal w-full mt-4 text-center">Comprar ahora</a>
-        </div>
-      )}      {/* Hero Section */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center pb-20 px-6 pt-32 overflow-hidden border-b-8 border-brand-brown">
-        <div className="absolute inset-0 z-0 bg-brand-black">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(62,39,35,0.15)_0%,transparent_70%)]" />
-        </div>
-
-        <div className="relative z-20 max-w-5xl text-center">
+    <div className="bg-brand-black text-white font-sans overflow-x-hidden rustic-grain">
+      
+      {/* 1. EL GANCHO */}
+      <section className="pt-16 pb-12 px-5 md:pt-24 border-b border-white/10 min-h-[90vh] flex flex-col justify-center">
+        <div className="max-w-4xl mx-auto w-full">
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            className="mb-8 inline-block"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mb-8 flex justify-start"
           >
-            <span className="px-6 py-2 border-2 border-brand-brown text-brand-brown font-mono text-sm uppercase tracking-[0.5em]">
-              Protocolo de Emergencia
+            <span className="px-4 py-1 border border-white/20 text-white/60 font-mono text-xs uppercase tracking-widest">
+              Advertencia
             </span>
           </motion.div>
 
           <motion.h1 
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.2 }}
-            className="text-6xl md:text-[11rem] mb-10 leading-[0.8] tracking-tighter"
+            className="text-[3.5rem] leading-[0.85] md:text-8xl lg:text-[9rem] mb-8 text-white word-break-words"
           >
-            EL MUNDO YA TIENE <br />
-            <span className="text-stroke-thin opacity-30">SUFICIENTES</span> ADORNOS. <br />
-            LO QUE NECESITA SON <span className="text-brand-brown">HOMBRES.</span>
+            EL MUNDO NO TE RESPETA PORQUE NO TIENES NADA QUE RESPETAR.
           </motion.h1>
 
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.5 }}
-            className="text-xl md:text-3xl text-neutral-500 max-w-3xl mx-auto mb-14 leading-tight font-light italic"
+            transition={{ delay: 0.2 }}
+            className="text-lg md:text-2xl text-neutral-400 font-sans leading-relaxed mb-10 max-w-2xl"
           >
-            Tu mandíbula caída, tu mirada sumisa y tu falta de propósito no son "genética". 
-            <span className="text-brand-bone block mt-4 font-bold not-italic decoration-brand-brown underline decoration-4 underline-offset-8">Son tu rendición documentada.</span>
+            Tu mandíbula caída, tu mirada sumisa y tu falta de propósito son la prueba de tu rendición. 
+            <span className="text-white font-bold block mt-4 border-l-2 border-brand-brown pl-4">
+              O recuperas tu diseño original hoy, o acepta tu destino como un hombre invisible.
+            </span>
           </motion.p>
           
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="flex justify-center"
+          {/* VSL Placeholder */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4 }}
+            className="video-placeholder group mt-10 md:mt-16"
           >
-            <a href="https://pay.hotmart.com/W105526885V?off=qmsrqdaf" className="btn-brutal px-12 py-8 text-2xl md:text-4xl group">
-              QUIERO RECUPERAR MI DISEÑO ORIGINAL
-              <ArrowRight size={40} className="group-hover:translate-x-4 transition-transform hidden md:block" />
-            </a>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,transparent_60%)] z-0" />
+            <div className="relative z-10 flex flex-col items-center">
+              <PlayCircle size={64} className="text-white/80 mb-4 group-hover:scale-110 transition-transform" strokeWidth={1} />
+              <p className="font-mono text-xs tracking-[0.3em] text-white/50 uppercase">ESTO NO ES PARA TODOS.</p>
+            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* The Mirror Section */}
-      <section className="py-24 px-6 bg-brand-black border-b border-brand-bone/5">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-20 items-center">
-          <motion.div {...fadeIn} className="relative aspect-square bg-brand-gray border-8 border-brand-brown flex flex-col items-center justify-center p-12 text-center group">
-            <div className="font-display text-[20rem] leading-none opacity-5 absolute select-none">!</div>
-            <h2 className="text-7xl md:text-[10rem] leading-none mb-6 relative z-10">MÍRATE.</h2>
-            <p className="text-brand-brown font-mono tracking-widest uppercase text-sm relative z-10 font-bold">Espejo de Realidad</p>
-          </motion.div>
-
-          <motion.div {...fadeIn} className="space-y-10 text-left">
-            <h2 className="text-5xl md:text-7xl leading-none">
-              NO EL FILTRO QUE USAS PARA ENGAÑAR A EXTRAÑOS EN INTERNET.
-            </h2>
-            <div className="h-2 w-32 bg-brand-brown" />
-            <div className="space-y-8 text-2xl text-neutral-400 leading-snug font-light">
-              <p>
-                Mira el espejo real. El que muestra a un hombre que pide permiso para existir, 
-                que baja la voz para no molestar y que se refugia en una pantalla porque la realidad le queda grande.
-              </p>
-              <p>
-                Te convencieron de que ser <span className="text-white font-black italic">"suave"</span> era una virtud. 
-                Te dijeron que tu agresividad natural, tu ambición y tu deseo de dominio eran "tóxicos".
-              </p>
-              <div className="p-10 bg-brand-brown/10 border-l-[12px] border-brand-brown">
-                <p className="text-brand-brown uppercase font-display text-5xl md:text-6xl leading-none tracking-tighter">
-                  Te castraron con tu propio consentimiento. 
-                </p>
-              </div>
-              <p className="text-white font-bold opacity-80 uppercase tracking-tighter text-3xl">
-                El resultado es el que vives cada mañana:
-              </p>
-            </div>
-          </motion.div>
-        </div>
-
-        <div className="mt-20 max-w-6xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-4 px-2">
-          {[
-            { title: "UN CUERPO", desc: "Que no impone respeto." },
-            { title: "MENTE SECUESTRADA", desc: "Por la dopamina barata del porno y el azúcar." },
-            { title: "UNA MUJER", desc: "Que te ve como un mueble, no como un líder." },
-            { title: "HIJOS", desc: "Que no tienen un roble donde apoyarse, sino un arbusto que se dobla." }
-          ].map((item, i) => (
-            <motion.div 
-              key={i}
-              variants={fadeIn}
-              whileHover={{ scale: 1.02 }}
-              className="p-8 bg-brand-gray border-2 border-brand-bone/5 hover:border-brand-brown transition-all"
-            >
-              <div className="text-brand-brown font-display text-3xl mb-2">{item.title}</div>
-              <p className="text-neutral-500 font-light italic leading-tight">{item.desc}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* The Solution: Book Mockup Layout */}
-      <section id="manifiesto" className="py-24 bg-neutral-900 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl text-brand-brown mb-2">EL FIN DEL HOMBRE BLANDO</h2>
-            <h3 className="text-5xl md:text-8xl">EL MANIFIESTO</h3>
-            <p className="mt-8 text-xl text-neutral-400 max-w-3xl mx-auto font-light leading-relaxed italic">
-              He escrito esto no para que te sientas mejor, sino para que el tipo mediocre que eres hoy muera de una vez. 
-              Este no es un libro de "autoayuda" con frases bonitas. Es un manual de ingeniería biológica y espiritual.
-            </p>
-          </div>
-
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            {/* Mockup area */}
-            <div className="lg:col-span-12 flex flex-col md:flex-row gap-12 items-center justify-center py-12">
-              <div className="relative group">
-                <div className="absolute -inset-10 bg-brand-brown/10 blur-[100px] animate-pulse" />
-                
-                {/* Book Mockup Built with CSS - Masculine & Rustic */}
-                <div className="relative w-80 h-[520px] bg-brand-gray border-t-[1px] border-l-[1px] border-white/20 shadow-[30px_30px_0px_#3E2723] flex flex-col p-10 transform -rotate-2 hover:rotate-0 transition-all duration-700 hover:shadow-[15px_15px_0px_#3E2723]">
-                  {/* Spine effect */}
-                  <div className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-black/40 to-transparent border-r border-white/5" />
-                  
-                  <div className="relative z-10 h-full flex flex-col justify-between">
-                    <div>
-                      <div className="font-mono text-[10px] tracking-[0.4em] text-brand-brown mb-6 uppercase">Documento Clasificado</div>
-                      <h4 className="text-5xl leading-[0.8] mb-4">EL FIN DEL <br /> <span className="text-brand-brown">HOMBRE</span> <br /> BLANDO</h4>
-                      <div className="h-1 w-12 bg-brand-brown mt-6" />
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="p-4 bg-brand-black/50 border border-white/5">
-                        <Shield size={40} className="text-brand-brown mb-2" />
-                        <div className="text-[10px] uppercase tracking-widest opacity-40">Protocolo de ejecución</div>
-                      </div>
-                      <div className="flex justify-between items-end">
-                        <div className="text-[8px] font-mono opacity-30">© MANUAL DE INGENIERÍA</div>
-                        <div className="text-xl font-display text-brand-brown">V.1</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="max-w-md space-y-8 text-center md:text-left">
-                 <h4 className="text-4xl md:text-6xl leading-none">MÁS QUE UN LIBRO. <br /> UN ARMA.</h4>
-                 <p className="text-xl text-neutral-500 font-light italic">
-                    "Has estado desarmado ante el mundo. Es hora de recuperar tu arsenal biológico."
-                 </p>
-                 <a href="https://pay.hotmart.com/W105526885V?off=qmsrqdaf" className="btn-brutal w-full text-center">RECLAMAR COPIA</a>
-              </div>
-            </div>
-
-            {/* Protocols area */}
-            <div className="lg:col-span-7 grid sm:grid-cols-2 gap-6">
-              <ProtocolCard 
-                icon={<Dna />} 
-                title="REESTRUCTURA FACIAL" 
-                desc="Cómo recuperar la mandíbula de cazador que la respiración bucal te robó." 
-              />
-              <ProtocolCard 
-                icon={<Flame />} 
-                title="QUÍMICA DE GUERRA" 
-                desc="El plan exacto para que tu testosterona deje de convertirse en estrógeno." 
-              />
-              <ProtocolCard 
-                icon={<Users />} 
-                title="DOMINIO DEL LOBO" 
-                desc="La psicología cruda de por qué las mujeres no respetan a los 'hombres buenos'." 
-              />
-              <ProtocolCard 
-                icon={<Shield />} 
-                title="EL TRONO DEL PATRIARCA" 
-                desc="Cómo liderar una familia bajo principios bíblicos para que tu apellido signifique algo." 
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* The 30 Day Challenge - Aggressive Style */}
-      <section id="desafio" className="py-24 px-6 bg-brand-brown/10 border-y-4 border-brand-brown">
-        <div className="max-w-5xl mx-auto text-center">
-          <motion.h2 {...fadeIn} className="text-5xl md:text-8xl mb-8">EL DESAFÍO DE 30 DÍAS</motion.h2>
-          <motion.div {...fadeIn} className="bg-brand-black p-8 md:p-16 border-2 border-brand-bone relative">
-            <div className="absolute top-0 right-0 px-4 py-2 bg-brand-brown text-white font-display text-2xl -translate-y-1/2 translate-x-4">
-              URGENTE
-            </div>
-            
-            <p className="text-xl md:text-2xl text-neutral-300 leading-relaxed mb-8">
-              Si crees que esto es "demasiado", cierra esta página. Sigue consumiendo Netflix, sigue perdiendo tu semilla frente a una pantalla y sigue siendo invisible. El mundo no te va a extrañar.
-            </p>
-            
-            <p className="text-2xl md:text-3xl text-brand-bone mb-12 font-display uppercase tracking-widest leading-none">
-              Pero si todavía te queda una gota de sangre hirviendo, dentro del manual encontrarás el <span className="text-brand-brown">Protocolo de 30 Días.</span>
-            </p>
-
-            <div className="grid md:grid-cols-3 gap-8 py-8 border-y border-brand-bone/10 mb-12 uppercase font-display text-2xl tracking-tighter opacity-80">
-              <div>Sin Excusas</div>
-              <div>Sin Negociaciones</div>
-              <div>Sin Descanso</div>
-            </div>
-
-            <p className="text-xl text-neutral-400 italic mb-12">
-              Al día 30, no serás perfecto, pero por primera vez en años, serás un hombre que se reconoce en el espejo.
-            </p>
-
-            <a href="https://pay.hotmart.com/W105526885V?off=qmsrqdaf" className="btn-brutal w-full md:w-auto text-3xl px-16 py-8 text-center">
-              RECLAMAR MI PROTOCOLO
-            </a>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Offer Final */}
-      <section className="py-24 px-6 bg-brand-bone text-brand-black text-center">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-7xl md:text-9xl leading-[0.8] mb-4">EL FIN DEL <br /> HOMBRE BLANDO</h2>
-          <p className="text-2xl font-mono opacity-60 mb-12 uppercase tracking-[0.2em]">
-            (Incluye el Manual de Emergencia para Hombres Débiles)
-          </p>
+      {/* 2. LA HISTORIA Y LA EMPATÍA */}
+      <section className="py-20 px-5 md:py-32 border-b border-white/10 bg-brand-gray/50">
+        <div className="max-w-3xl mx-auto">
+          <motion.h2 {...fadeIn} className="text-4xl md:text-6xl mb-10 text-white">
+            Yo no vengo a caerte bien.
+          </motion.h2>
           
-          <div className="mb-16">
-            <div className="text-sm font-bold uppercase tracking-widest mb-2 opacity-40">Precio de inversión</div>
-            <div className="text-9xl md:text-[12rem] font-display leading-none">$14.97</div>
-          </div>
+          <motion.div {...fadeIn} className="space-y-8 text-lg font-sans text-neutral-300 leading-relaxed">
+            <p>
+              Hubo un tiempo donde yo también era parte de la masa dócil. Un hombre que pedía permiso para hablar, con la cara hundida por la mala respiración y la mente nublada por placeres baratos. Creía que "portarme bien" me daría el éxito. <span className="text-white font-bold italic">Me equivoqué.</span>
+            </p>
+            <div className="h-px w-full bg-white/10 my-8"></div>
+            <p className="font-serif text-2xl md:text-3xl italic text-white leading-snug">
+              El momento de claridad: Me di cuenta de que el sistema te quiere blando porque un hombre blando es <span className="text-brand-brown">fácil de controlar</span>.
+            </p>
+            <p>
+              Me cansé de dar lástima. Me dediqué a descifrar la arquitectura del hombre que impone respeto: desde su estructura ósea hasta su autoridad espiritual. Lo que descubrí no está en los libros de texto modernos, porque la verdad es demasiado peligrosa para los débiles.
+            </p>
+          </motion.div>
+        </div>
+      </section>
 
-          <p className="text-3xl md:text-5xl font-display mb-12 leading-tight uppercase px-4 max-w-2xl mx-auto">
-            "No es el precio de un libro. <br /> Es el precio de <span className="italic underline decoration-4 underline-offset-8">dejar de dar lástima.</span>"
-          </p>
+      {/* 3. LA PRESENTACIÓN DE LA "NUEVA OPORTUNIDAD" */}
+      <section className="py-20 px-5 md:py-32 border-b border-white/10">
+        <div className="max-w-5xl mx-auto">
+          <motion.div {...fadeIn} className="p-8 md:p-12 border border-white/20 bg-brand-gray relative overflow-hidden flex flex-col md:flex-row items-center gap-10">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl" />
+            <div className="md:w-1/2 relative z-10 w-full">
+              <h2 className="text-3xl md:text-5xl mb-6">Olvida la motivación barata.</h2>
+              <p className="text-lg text-neutral-400 mb-8">
+                Si tu química interna está rota, ninguna frase bonita te va a salvar.
+              </p>
+              <p className="text-xl md:text-2xl text-white font-serif italic mb-6">
+                EL FIN DEL HOMBRE BLANDO es el único vehículo de reestructura total. Es un método de ingeniería masculina que ataca la raíz.
+              </p>
+              <p className="text-neutral-400">
+                Mientras los demás se quejan de la sociedad, nosotros reconstruimos el hardware y el software del hombre. Es la única salida real para el que todavía tiene una gota de orgullo.
+              </p>
+            </div>
+            <div className="md:w-1/2 relative z-10 w-full flex justify-center">
+               <img src="https://i.imgur.com/hecf4aT.png" alt="Libro El Fin del Hombre Blando" className="w-full max-w-[350px] drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-transform hover:scale-105 duration-500" referrerPolicy="no-referrer" />
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
-          <a href="https://pay.hotmart.com/W105526885V?off=qmsrqdaf" className="w-full md:w-auto px-12 py-8 bg-brand-black text-brand-bone font-display text-4xl hover:scale-105 transition-transform duration-300 text-center flex items-center justify-center">
-            QUIERO RECUPERAR MI DISEÑO ORIGINAL
-          </a>
+      {/* 4. EL CONTENIDO DEL PROGRAMA */}
+      <section className="py-20 px-5 md:py-32 border-b border-white/10 bg-brand-gray/30">
+        <div className="max-w-5xl mx-auto">
+          <motion.div {...fadeIn} className="mb-16 text-center md:text-left">
+            <h2 className="text-5xl md:text-7xl mb-6">ESTO ES LO QUE VAS A EJECUTAR</h2>
+            <p className="text-xl text-neutral-400 font-mono uppercase tracking-widest text-sm md:text-base">Para dejar de ser una sombra</p>
+          </motion.div>
 
-          <div className="mt-8 flex justify-center">
-            {/* Hotmart Checkout Widget */}
-            <a 
-              onClick={(e) => e.preventDefault()} 
-              href="https://pay.hotmart.com/W105526885V?checkoutMode=2&off=qmsrqdaf" 
-              className="hotmart-fb hotmart__button-checkout"
-            >
-              Comprar ahora
-            </a>
+          <div className="grid md:grid-cols-2 gap-px bg-white/10 border border-white/10">
+            <ProtocolCard 
+              icon={<Dna size={40} strokeWidth={1} />}
+              title="REESTRUCTURA FACIAL"
+              desc="Los protocolos de masticación y postura lingual para forjar la mandíbula de un líder y eliminar la cara de víctima."
+            />
+            <ProtocolCard 
+              icon={<Flame size={40} strokeWidth={1} />}
+              title="QUÍMICA DE GUERRA"
+              desc="Cómo purgar el estrógeno y disparar tu testosterona de forma natural. Sin trucos, solo biología pura."
+            />
+            <ProtocolCard 
+              icon={<Users size={40} strokeWidth={1} />}
+              title="DOMINIO DEL LOBO"
+              desc="La psicología de autoridad innegociable. Deja de suplicar atención y empieza a proyectar poder."
+            />
+            <ProtocolCard 
+              icon={<Shield size={40} strokeWidth={1} />}
+              title="EL TRONO DEL PATRIARCA"
+              desc="Liderazgo bíblico. Cómo convertirte en el roble de tu estirpe y recuperar el mando de tu hogar."
+            />
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-20 px-6 border-t border-brand-bone/10 flex flex-col items-center">
-        <motion.div 
-          animate={{ opacity: [0.3, 0.6, 0.3] }}
-          transition={{ duration: 4, repeat: Infinity }}
-          className="text-center"
-        >
-          <div className="text-3xl md:text-4xl italic text-neutral-400 mb-4 max-w-2xl font-serif">
-            "Portaos como hombres, sed fuertes."
-          </div>
-          <div className="font-display text-2xl text-brand-brown uppercase tracking-widest">
-            — 1 Corintios 16:13
-          </div>
-        </motion.div>
-        
-        <div className="mt-20 text-[10px] uppercase tracking-[0.5em] opacity-20">
-          Manual de Ingeniería Biológica y Espiritual &copy; {new Date().getFullYear()}
-        </div>
-      </footer>
+      {/* 5. PRUEBA SOCIAL INNEGABLE */}
+      <section className="py-20 px-5 md:py-32 border-b border-white/10 overflow-hidden">
+        <div className="max-w-[100vw] mx-auto">
+          <motion.div {...fadeIn} className="text-center mb-16">
+             <h2 className="text-4xl md:text-6xl text-white">RESULTADOS BRUTALES</h2>
+          </motion.div>
 
-      {/* Decorative Scrolls Hint */}
-      <motion.div 
-        animate={{ y: [0, 5, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-        className="fixed bottom-8 left-1/2 -translate-x-1/2 z-30 opacity-20 hidden md:block"
-      >
-        <ChevronDown size={24} />
-      </motion.div>
+          <div className="relative w-full overflow-hidden">
+            <div className="absolute inset-y-0 left-0 w-12 md:w-32 bg-gradient-to-r from-brand-black to-transparent z-10 pointer-events-none" />
+            <div className="absolute inset-y-0 right-0 w-12 md:w-32 bg-gradient-to-l from-brand-black to-transparent z-10 pointer-events-none" />
+            
+            <div className="flex w-max gap-6 px-6 animate-[scroll_30s_linear_infinite] hover:[animation-play-state:paused]">
+              {[
+                "https://i.imgur.com/8x3QiN1.png",
+                "https://i.imgur.com/gf6sSD8.png",
+                "https://i.imgur.com/K5p8Xxc.png",
+                "https://i.imgur.com/8x3QiN1.png",
+                "https://i.imgur.com/gf6sSD8.png",
+                "https://i.imgur.com/K5p8Xxc.png"
+              ].map((imgUrl, i) => (
+                <img 
+                  key={i} 
+                  src={imgUrl} 
+                  alt="Testimonio de cliente" 
+                  className="w-[280px] md:w-[350px] xl:w-[400px] h-auto rounded-3xl object-cover shadow-[0_10px_30px_rgba(0,0,0,0.8)] border border-white/10" 
+                  referrerPolicy="no-referrer"
+                />
+              ))}
+            </div>
+          </div>
+          <p className="text-center text-xs font-mono uppercase tracking-[0.2em] mt-12 text-neutral-600">
+            (Más testimonios de hombres que despertaron en el interior)
+          </p>
+        </div>
+      </section>
+
+      {/* 6. LA OFERTA Y LA GARANTÍA */}
+      <section className="py-20 px-5 md:py-32 border-b border-white/10 bg-brand-gray/80">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.p {...fadeIn} className="text-xl md:text-2xl text-neutral-400 mb-12">
+            Podrías gastar miles de dólares en terapia para "aceptar tu debilidad", o podrías invertir una fracción en eliminarla.
+          </motion.p>
+          
+          <motion.div {...fadeIn} className="mb-16">
+             <div className="text-sm font-mono uppercase tracking-[0.4em] mb-4 text-brand-brown">Acceso Inmediato Por Solo:</div>
+             <div className="text-[6rem] md:text-[9rem] font-display leading-[0.8] text-white">$14.97</div>
+          </motion.div>
+
+          <motion.div {...fadeIn} className="flex flex-col items-center">
+             <img 
+                src="https://i.imgur.com/8zKpbAj.png" 
+                alt="Garantía de 7 días" 
+                className="w-full max-w-[280px] rounded-[2rem] mb-10 drop-shadow-[0_10px_40px_rgba(188,170,164,0.15)]" 
+                referrerPolicy="no-referrer" 
+             />
+             <p className="text-neutral-400 text-lg md:text-xl leading-relaxed max-w-2xl">
+                Tienes 7 días. Si al abrir el manual sientes que es "demasiado duro" para ti, pide el reembolso. Te devolveré tu dinero para que puedas seguir comprando la comodidad que te está matando. 
+                <span className="block mt-4 text-white font-bold">El riesgo es mío; la vergüenza de seguir igual es tuya.</span>
+             </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 7. ESCASEZ Y URGENCIA REAL */}
+      <section className="py-20 px-5 md:py-32 bg-black">
+        <div className="max-w-3xl mx-auto text-center">
+          <motion.h2 {...fadeIn} className="text-5xl md:text-7xl mb-8 text-white tracking-tighter">
+            ESTA ES TU ÚNICA ADVERTENCIA.
+          </motion.h2>
+
+          <motion.div {...fadeIn} className="space-y-6 text-lg text-neutral-400 mb-12 text-left md:text-center">
+            <p>
+              No estoy aquí para perseguirte. Si decides cerrar esta página sin el manual, mañana te despertarás siendo el mismo hombre intrascendente.
+            </p>
+            <p>
+              Pero esta oferta de <strong className="text-white">$14.97</strong> es solo para los primeros que actúen. Una vez que el cupo se llene, el precio subirá permanentemente.
+            </p>
+            <p className="text-2xl md:text-3xl text-white font-serif italic pt-4">
+              El tiempo de la duda se acabó. O te forjas o te doblas.
+            </p>
+          </motion.div>
+
+          {/* TIMER */}
+          <motion.div {...fadeIn} className="mb-12 inline-flex flex-col items-center">
+            <div className="flex items-center gap-3 mb-2 opacity-60">
+              <Clock size={16} />
+              <span className="font-mono text-xs uppercase tracking-[0.3em]">Tiempo restante</span>
+            </div>
+            <div className={`text-6xl md:text-8xl font-display tracking-widest ${timeLeft < 300 ? 'text-red-500' : 'text-white'}`}>
+              {timeString}
+            </div>
+          </motion.div>
+
+          <motion.div {...fadeIn} className="flex flex-col items-center">
+            <a href="https://pay.hotmart.com/W105526885V?off=qmsrqdaf" className="btn-brutal relative group overflow-hidden w-full md:max-w-md">
+              <span className="relative z-10 flex items-center md:mx-auto gap-2">
+                SÍ, QUIERO MI REESTRUCTURA AHORA <ArrowRight className="group-hover:translate-x-2 transition-transform hidden md:block" />
+              </span>
+            </a>
+            <p className="mt-6 text-xs text-neutral-600 font-mono tracking-widest uppercase flex items-center gap-2">
+              <Shield size={12} /> Pago seguro procesado por Hotmart
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
     </div>
   );
 }
 
-function ProtocolCard({ icon, title, desc }: { icon: ReactNode, title: string, desc: string }) {
+function ProtocolCard({ icon, title, desc }: { icon: React.ReactNode, title: string, desc: string }) {
   return (
-    <motion.div 
-      {...fadeIn}
-      whileHover={{ y: -5 }}
-      className="p-8 bg-brand-black border-2 border-brand-bone/5 hover:border-brand-brown transition-all group"
-    >
-      <div className="text-brand-brown mb-6 p-4 border-2 border-brand-brown/20 inline-block group-hover:bg-brand-brown transition-colors group-hover:text-white">
+    <div className="p-8 md:p-12 bg-black hover:bg-brand-gray transition-colors border border-transparent hover:border-white/10 group flex flex-col items-start">
+      <div className="text-white/40 mb-8 pb-4 border-b border-white/10 group-hover:text-brand-brown transition-colors">
         {icon}
       </div>
-      <h4 className="text-2xl mb-4 leading-none">{title}</h4>
-      <p className="text-neutral-500 text-sm italic font-light group-hover:text-neutral-300 transition-colors">
+      <h4 className="text-3xl md:text-4xl mb-4 leading-none text-white">{title}</h4>
+      <p className="text-neutral-400 font-sans text-lg leading-relaxed">
         {desc}
       </p>
-    </motion.div>
+    </div>
   );
 }
 
