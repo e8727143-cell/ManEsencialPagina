@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useRef, ReactNode } from "react";
-import { motion, useInView } from "motion/react";
+import { motion, useInView, AnimatePresence } from "motion/react";
 import { 
   Shield, 
   Flame, 
@@ -15,7 +15,8 @@ import {
   Clock,
   ChevronLeft,
   ChevronRight,
-  AlertTriangle
+  AlertTriangle,
+  X
 } from "lucide-react";
 
 const fadeIn = {
@@ -28,8 +29,17 @@ const fadeIn = {
 export default function App() {
   const [timeLeft, setTimeLeft] = useState(8 * 60 + 37);
   const [timerStarted, setTimerStarted] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const testimoniesRef = useRef(null);
   const isInView = useInView(testimoniesRef, { once: true, amount: 0.1 });
+
+  useEffect(() => {
+    // Notify visit via Telegram
+    fetch("/api/notify-visit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    }).catch((err) => console.error("Notification error:", err));
+  }, []);
 
   useEffect(() => {
     if (isInView) {
@@ -260,11 +270,11 @@ export default function App() {
             
             <motion.div 
               {...fadeIn} 
-              className="mt-16 flex justify-center w-full"
+              className="mt-12 flex justify-center w-full"
             >
               <a 
                 href="#oferta" 
-                className="btn-brutal max-w-sm md:max-w-md shadow-[0_10px_30px_rgba(188,170,164,0.3)]"
+                className="btn-brutal !w-[280px] md:!w-[340px] !py-4 !text-xl shadow-[0_10px_30px_rgba(188,170,164,0.2)]"
               >
                 SEGUIR LEYENDO
               </a>
@@ -297,7 +307,8 @@ export default function App() {
                   key={i} 
                   src={imgUrl} 
                   alt="Testimonio de cliente" 
-                  className="w-[280px] md:w-[350px] xl:w-[400px] h-auto rounded-3xl object-cover shadow-[0_10px_30px_rgba(0,0,0,0.8)] border border-white/10" 
+                  onClick={() => setSelectedImage(imgUrl)}
+                  className="w-[280px] md:w-[350px] xl:w-[400px] h-auto rounded-3xl object-cover shadow-[0_10px_30px_rgba(0,0,0,0.8)] border border-white/10 cursor-pointer transition-transform hover:scale-[1.02] active:scale-95" 
                   referrerPolicy="no-referrer"
                 />
               ))}
@@ -428,6 +439,40 @@ export default function App() {
         </div>
       </section>
 
+      <AnimatePresence>
+        {selectedImage && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedImage(null)}
+            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-5 md:p-10 cursor-zoom-out"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="relative max-w-5xl w-full max-h-screen flex items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button 
+                onClick={() => setSelectedImage(null)}
+                className="absolute -top-12 right-0 md:-top-16 md:-right-16 p-3 text-white hover:bg-white/10 rounded-full transition-colors z-10"
+              >
+                <X size={32} />
+              </button>
+              <img 
+                src={selectedImage} 
+                alt="Enlarged testimony" 
+                className="max-w-full max-h-[85vh] object-contain rounded-2xl md:rounded-[2.5rem] shadow-[0_30px_100px_rgba(0,0,0,0.8)] border border-white/10"
+                referrerPolicy="no-referrer"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }
@@ -516,20 +561,20 @@ function BookPreview() {
       </div>
 
       {/* Nav Controls */}
-      <div className="flex items-center gap-10 relative z-50">
+      <div className="flex items-center gap-6 relative z-50">
         <button 
           onClick={prev}
           disabled={currentPage === 0}
-          className={`p-4 rounded-full border border-white/10 transition-all ${currentPage === 0 ? 'opacity-20 cursor-not-allowed' : 'hover:bg-brand-brown text-white hover:border-brand-brown'}`}
+          className={`p-3 rounded-full border border-white/10 transition-all ${currentPage === 0 ? 'opacity-20 cursor-not-allowed' : 'hover:bg-brand-brown text-white hover:border-brand-brown'}`}
         >
-          <ChevronLeft size={24} />
+          <ChevronLeft size={20} />
         </button>
 
-        <div className="flex gap-2.5">
+        <div className="flex gap-2">
           {pages.map((_, i) => (
             <div 
               key={i} 
-              className={`h-0.5 rounded-full transition-all duration-500 ${currentPage === i ? 'w-10 bg-brand-brown' : 'w-3 bg-white/10'}`} 
+              className={`h-0.5 rounded-full transition-all duration-500 ${currentPage === i ? 'w-8 bg-brand-brown' : 'w-2 bg-white/10'}`} 
             />
           ))}
         </div>
@@ -537,9 +582,9 @@ function BookPreview() {
         <button 
           onClick={next}
           disabled={currentPage === pages.length - 1}
-          className={`p-4 rounded-full border border-white/10 transition-all ${currentPage === pages.length - 1 ? 'opacity-20 cursor-not-allowed' : 'hover:bg-brand-brown text-white hover:border-brand-brown'}`}
+          className={`p-3 rounded-full border border-white/10 transition-all ${currentPage === pages.length - 1 ? 'opacity-20 cursor-not-allowed' : 'hover:bg-brand-brown text-white hover:border-brand-brown'}`}
         >
-          <ChevronRight size={24} />
+          <ChevronRight size={20} />
         </button>
       </div>
     </div>
