@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ReactNode } from "react";
-import { motion } from "motion/react";
+import { useState, useEffect, useRef, ReactNode } from "react";
+import { motion, useInView } from "motion/react";
 import { 
   Shield, 
   Flame, 
@@ -14,9 +14,9 @@ import {
   PlayCircle,
   Clock,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  AlertTriangle
 } from "lucide-react";
-import { useState, useEffect } from "react";
 
 const fadeIn = {
   initial: { opacity: 0, y: 15 },
@@ -26,14 +26,25 @@ const fadeIn = {
 };
 
 export default function App() {
-  const [timeLeft, setTimeLeft] = useState(15 * 60);
+  const [timeLeft, setTimeLeft] = useState(8 * 60 + 37);
+  const [timerStarted, setTimerStarted] = useState(false);
+  const testimoniesRef = useRef(null);
+  const isInView = useInView(testimoniesRef, { once: true, amount: 0.1 });
 
   useEffect(() => {
+    if (isInView) {
+      setTimerStarted(true);
+    }
+  }, [isInView]);
+
+  useEffect(() => {
+    if (!timerStarted) return;
+    
     const timer = setInterval(() => {
       setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [timerStarted]);
 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
@@ -45,6 +56,27 @@ export default function App() {
       {/* 1. EL GANCHO */}
       <section className="pt-16 pb-12 px-5 md:pt-24 border-b border-white/10 min-h-[90vh] flex flex-col justify-center">
         <div className="max-w-4xl mx-auto w-full">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-[#fcf6ba] text-black py-3 px-6 rounded-lg mb-10 flex items-center justify-center gap-4 font-display font-bold shadow-[0_0_30px_rgba(252,246,186,0.3)] border-b-4 border-black/20"
+          >
+            <motion.div
+              animate={{ 
+                rotate: [0, -10, 10, -10, 10, 0],
+                scale: [1, 1.2, 1]
+              }}
+              transition={{ repeat: Infinity, duration: 2 }}
+            >
+              <AlertTriangle className="text-black" size={24} />
+            </motion.div>
+            <span className="text-sm md:text-lg tracking-widest uppercase italic">
+              ¡Advertencia! Falta poco tiempo...
+            </span>
+            <div className="hidden md:block w-px h-6 bg-black/20 mx-2" />
+            <span className="hidden md:inline font-mono text-sm">{timeString}</span>
+          </motion.div>
+
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -225,12 +257,24 @@ export default function App() {
             </motion.div>
 
             <BookPreview />
+            
+            <motion.div 
+              {...fadeIn} 
+              className="mt-16 flex justify-center w-full"
+            >
+              <a 
+                href="#oferta" 
+                className="btn-brutal max-w-sm md:max-w-md shadow-[0_10px_30px_rgba(188,170,164,0.3)]"
+              >
+                SEGUIR LEYENDO
+              </a>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* 5. PRUEBA SOCIAL INNEGABLE */}
-      <section className="py-12 px-5 md:py-20 border-b border-white/10 overflow-hidden">
+      <section ref={testimoniesRef} className="py-12 px-5 md:py-20 border-b border-white/10 overflow-hidden">
         <div className="max-w-[100vw] mx-auto">
           <motion.div {...fadeIn} className="text-center mb-12">
              <h2 className="text-4xl md:text-6xl text-white">RESULTADOS BRUTALES</h2>
@@ -263,25 +307,57 @@ export default function App() {
       </section>
 
       {/* 6. LA OFERTA Y LA GARANTÍA */}
-      <section className="py-12 px-5 md:py-20 border-b border-white/10 bg-brand-gray/80">
+      <section id="oferta" className="py-12 px-5 md:py-20 border-b border-white/10 bg-brand-gray/80">
         <div className="max-w-4xl mx-auto text-center">
           <motion.p {...fadeIn} className="text-xl md:text-2xl text-neutral-400 mb-10">
             Podrías gastar miles de dólares en terapia para "aceptar tu debilidad", o podrías invertir una fracción en eliminarla.
           </motion.p>
 
-          <motion.div {...fadeIn} className="flex justify-center mb-10">
+          <motion.div {...fadeIn} className="relative flex justify-center mb-10 group">
+            {/* Soft Golden Background Glow */}
+            <motion.div 
+              animate={{ 
+                scale: [1, 1.1, 1],
+                opacity: [0.3, 0.5, 0.3],
+              }}
+              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-brand-brown/20 rounded-full blur-[80px] pointer-events-none"
+            />
+            <motion.div 
+              animate={{ 
+                scale: [1, 1.15, 1],
+                opacity: [0.2, 0.4, 0.2],
+              }}
+              transition={{ repeat: Infinity, duration: 3, ease: "easeInOut", delay: 0.5 }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-white/5 rounded-full blur-[60px] pointer-events-none"
+            />
+            
             <img 
-              src="https://i.imgur.com/mflmRv3.png" 
+              src="https://i.imgur.com/LtDhOsg.png" 
               alt="Mockup El Fin del Hombre Blando" 
-              className="w-full max-w-sm drop-shadow-2xl" 
+              className="relative z-10 w-full max-w-[280px] drop-shadow-[0_20px_50px_rgba(0,0,0,0.8)] transition-transform duration-700 group-hover:scale-105" 
               referrerPolicy="no-referrer" 
             />
           </motion.div>
           
-          <motion.div {...fadeIn} className="mb-14">
-             <div className="text-sm md:text-base font-mono uppercase tracking-[0.4em] mb-4 text-brand-brown leading-relaxed">
-               ACCESO INMEDIATO<br />POR TAN SOLO:
+          <motion.div {...fadeIn} className="mb-14 relative pt-16">
+             {/* Eye-catching Discount Badge */}
+             <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-20">
+               <motion.div 
+                 animate={{ 
+                   scale: [1, 1.02, 1],
+                 }}
+                 transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
+                 className="bg-red-600 text-white px-5 py-1.5 rounded-full font-display font-bold text-sm md:text-base shadow-[0_0_20px_rgba(220,38,38,0.2)] border-2 border-white/10 whitespace-nowrap italic"
+               >
+                 67% DE DESCUENTO EN ESTE INSTANTE
+               </motion.div>
              </div>
+
+             <div className="text-sm md:text-lg font-mono uppercase tracking-[0.4em] mb-4 text-brand-brown/50 line-through">
+               VALOR ORIGINAL $44.97
+             </div>
+             
              <div className="text-[6.5rem] md:text-[10rem] font-display leading-[0.8] text-[#fcf6ba] gold-text relative z-10">
                $14.97
              </div>
@@ -294,14 +370,21 @@ export default function App() {
               </span>
             </a>
 
-            <div className="flex flex-col items-center mb-6">
-              <div className="flex items-center gap-3 mb-2 text-red-500 opacity-80">
-                <Clock size={16} />
-                <span className="font-mono text-xs uppercase tracking-[0.3em]">Tiempo restante</span>
+            <div className="flex flex-col items-center mb-10 w-full">
+              <div className="flex items-center gap-3 mb-4 text-red-500 opacity-80">
+                <Clock size={20} />
+                <span className="font-mono text-sm uppercase tracking-[0.4em]">Oferta expira en:</span>
               </div>
-              <div className={`text-6xl md:text-8xl font-display tracking-widest text-red-500 ${timeLeft < 300 ? 'animate-pulse' : ''}`}>
-                {timeString}
+              <div className={`w-full md:max-w-xl py-6 border-2 border-red-500/30 rounded-2xl bg-red-500/5 flex items-center justify-center ${timeLeft < 300 && timerStarted ? 'animate-pulse' : ''}`}>
+                <div className="text-6xl md:text-8xl font-display tracking-widest text-red-500">
+                  {timeString}
+                </div>
               </div>
+              {!timerStarted && (
+                <div className="mt-4 text-neutral-500 font-mono text-[10px] uppercase tracking-widest">
+                  El tiempo empezará a correr en breve...
+                </div>
+              )}
             </div>
 
             <p className="text-xs text-neutral-600 font-mono tracking-widest uppercase flex items-center gap-2">
@@ -349,7 +432,7 @@ export default function App() {
   );
 }
 
-function ProtocolCard({ icon, title, desc }: { icon: React.ReactNode, title: string, desc: string }) {
+function ProtocolCard({ icon, title, desc }: { icon: ReactNode, title: string, desc: string }) {
   return (
     <div className="flex flex-col group h-full">
       {/* Top horizontal bar card */}
