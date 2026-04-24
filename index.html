@@ -4,6 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>El Fin del Hombre Blando | Manifiesto</title>
+    <script>
+      // Fix for "Cannot set property fetch of #<Window> which has only a getter"
+      // This happens when some external scripts try to override fetch in some environments.
+      try {
+        const originalFetch = window.fetch;
+        Object.defineProperty(window, 'fetch', {
+          get: () => originalFetch,
+          set: (v) => { console.warn('Something tried to override fetch:', v); },
+          configurable: true
+        });
+      } catch (e) {
+        console.warn('Could not redefine fetch property:', e);
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

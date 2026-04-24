@@ -45,11 +45,11 @@
 }
 
 .btn-brutal {
-  @apply w-full flex items-center justify-center py-6 px-6 bg-white text-black font-display text-3xl tracking-wide uppercase transition-all duration-300 border-2 border-white;
+  @apply w-full flex items-center justify-center py-6 px-6 bg-white text-black font-display text-3xl tracking-wide transition-all duration-300 border-2 border-brand-brown rounded-2xl;
 }
 
 .btn-brutal:hover, .btn-brutal:active {
-  @apply bg-transparent text-white;
+  @apply bg-brand-brown/10 text-white rounded-2xl;
 }
 
 .brutal-border {
@@ -76,6 +76,21 @@
   }
   100% {
     transform: translateX(calc(-50% - 0.75rem)); /* accounting for gap */
+  }
+}
+
+.gold-text {
+  background: linear-gradient(to right, #bf953f, #fcf6ba, #bf953f, #fbf5b7, #bf953f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 200% auto;
+  animation: shine 3s linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
   }
 }
 
