@@ -4,46 +4,28 @@ import path from "path";
 import axios from "axios";
 import dotenv from "dotenv";
 import fs from "fs";
-import cron from "node-cron";
 
 dotenv.config();
 
 const VISITS_FILE = path.join(process.cwd(), "visits.json");
 
-interface VisitsData {
-  total: number;
-  daily: number;
-  lastDate: string;
-}
-
 // Helper to get visits
-function getVisits(): VisitsData {
-  const today = new Date().toISOString().split('T')[0];
+function getVisits() {
   try {
     if (fs.existsSync(VISITS_FILE)) {
       const data = fs.readFileSync(VISITS_FILE, "utf-8");
-      const visits = JSON.parse(data) as VisitsData;
-      
-      // If it's a new day, reset daily but keep the date for the cron job to know when to send
-      // (Actually, the cron job will handle the reset after sending)
-      if (visits.lastDate !== today) {
-        // We don't reset here so the cron job can send the Final count of the previous day if it missed it
-        // But for simplicity, let's just ensure the structure is correct
-        if (visits.daily === undefined) visits.daily = 0;
-        if (visits.lastDate === undefined) visits.lastDate = today;
-      }
-      return visits;
+      return JSON.parse(data);
     }
   } catch (e) {
     console.error("Error reading internal visits file", e);
   }
-  return { total: 0, daily: 0, lastDate: today };
+  return { total: 0 };
 }
 
 // Helper to save visits
-function saveVisits(visits: VisitsData) {
+function saveVisits(visits: { total: number }) {
   try {
-    fs.writeFileSync(VISITS_FILE, JSON.stringify(visits, null, 2), "utf-8");
+    fs.writeFileSync(VISITS_FILE, JSON.stringify(visits), "utf-8");
   } catch (e) {
     console.error("Error saving internal visits file", e);
   }
@@ -55,74 +37,32 @@ async function startServer() {
 
   app.use(express.json());
 
-  // Cron Job: Send daily report at 23:00 (11 PM) Uruguay Time
-  cron.schedule("0 23 * * *", async () => {
-    const token = process.env.TELEGRAM_BOT_TOKEN;
-    const chatId = process.env.TELEGRAM_CHAT_ID;
-    
-    if (!token || !chatId) return;
-
-    const visits = getVisits();
-    
-    if (visits.daily > 0) {
-      try {
-        const message = `📊 **RESUMEN DEL DÍA**\n\nHoy tuviste **${visits.daily}** visitantes en la página. ¡Felicidades! 🎉\n\nTotal histórico: ${visits.total}`;
-        
-        await axios.post(`https://api.telegram.org/bot${token}/sendMessage`, {
-          chat_id: chatId,
-          text: message,
-          parse_mode: 'Markdown'
-        });
-
-        // Reset daily count after sending report
-        visits.daily = 0;
-        visits.lastDate = new Date().toISOString().split('T')[0];
-        saveVisits(visits);
-        
-        console.log("Daily report sent successfully");
-      } catch (error) {
-        console.error("Error sending daily Telegram report:", error);
-      }
-    }
-  }, {
-    timezone: "America/Montevideo"
-  });
-
-  // API Route to send Telegram notification with counter
+  // API Route to send Telegram notification
   app.post("/api/notify-visit", async (req, res) => {
     const token = process.env.TELEGRAM_BOT_TOKEN;
     const chatId = process.env.TELEGRAM_CHAT_ID;
 
-    // Increment counters
-    const today = new Date().toISOString().split('T')[0];
+    // Increment counter
     const visits = getVisits();
-    
-    // Check if we need to reset daily count (if the cron didn't run or it's just a new day)
-    if (visits.lastDate !== today) {
-      visits.daily = 1;
-      visits.lastDate = today;
-    } else {
-      visits.daily += 1;
-    }
-    
     visits.total += 1;
     saveVisits(visits);
 
     if (!token || !chatId) {
       console.warn("Telegram credentials not configured");
-      return res.status(200).json({ status: "skipped", reason: "no_credentials", total: visits.total });
+      return res.status(200).json({ status: "skipped", reason: "no_credentials", currentTotal: visits.total });
     }
 
     try {
-      const message = `🚨 ¡Nuevo visitante en tu página!\n\nEsta es la visita #${visits.daily} del día 🔥\nTotal acumulado: ${visits.total} usuarios.`;
+      const message = `Visita Nueva MAN 🔥 (${visits.total})`;
       
       await axios.post(`https://api.telegram.org/bot${token}/sendMessage`, {
         chat_id: chatId,
         text: message,
       });
-      res.json({ status: "ok", total: visits.total, daily: visits.daily });
-    } catch (error) {
-      console.error("Error sending Telegram message:", error);
+      
+      res.json({ status: "ok", total: visits.total });
+    } catch (error: any) {
+      console.error("Error sending Telegram message:", error.response?.data || error.message);
       res.status(500).json({ error: "Failed to send notification" });
     }
   });
