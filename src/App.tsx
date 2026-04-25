@@ -35,10 +35,16 @@ export default function App() {
 
   useEffect(() => {
     // Notify visit via Telegram
+    console.log("Attempting to notify visit...");
     fetch("/api/notify-visit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-    }).catch((err) => console.error("Notification error:", err));
+    })
+    .then(async (res) => {
+      const data = await res.json();
+      console.log("Notification response:", data);
+    })
+    .catch((err) => console.error("Notification error:", err));
   }, []);
 
   useEffect(() => {

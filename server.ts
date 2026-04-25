@@ -3,32 +3,24 @@ import { createServer as createViteServer } from "vite";
 import path from "path";
 import axios from "axios";
 import dotenv from "dotenv";
-import fs from "fs";
+import { createClient } from "@supabase/supabase-js";
 
 dotenv.config();
 
-const VISITS_FILE = path.join(process.cwd(), "visits.json");
+// Lazy initialization of Supabase
+let supabaseClient: any = null;
 
-// Helper to get visits
-function getVisits() {
-  try {
-    if (fs.existsSync(VISITS_FILE)) {
-      const data = fs.readFileSync(VISITS_FILE, "utf-8");
-      return JSON.parse(data);
+function getSupabase() {
+  if (!supabaseClient) {
+    const url = process.env.VITE_SUPABASE_URL;
+    const key = process.env.VITE_SUPABASE_ANON_KEY;
+    if (!url || !key) {
+      console.warn("Supabase credentials missing. Visits will not be counted.");
+      return null;
     }
-  } catch (e) {
-    console.error("Error reading internal visits file", e);
+    supabaseClient = createClient(url, key);
   }
-  return { total: 0 };
-}
-
-// Helper to save visits
-function saveVisits(visits: { total: number }) {
-  try {
-    fs.writeFileSync(VISITS_FILE, JSON.stringify(visits), "utf-8");
-  } catch (e) {
-    console.error("Error saving internal visits file", e);
-  }
+  return supabaseClient;
 }
 
 async function startServer() {
@@ -42,25 +34,48 @@ async function startServer() {
     const token = process.env.TELEGRAM_BOT_TOKEN;
     const chatId = process.env.TELEGRAM_CHAT_ID;
 
-    // Increment counter
-    const visits = getVisits();
-    visits.total += 1;
-    saveVisits(visits);
+    let currentTotal = 0;
+    const supabase = getSupabase();
+
+    if (supabase) {
+      try {
+        // Increment total_visits in Supabase using the SQL function or simple update
+        // Since we want the new value, we'll do a read-then-write or use a RPC if available
+        // For simplicity: fetch current, increment, update.
+        const { data, error } = await supabase
+          .from('site_stats')
+          .select('value')
+          .eq('name', 'total_visits')
+          .single();
+        
+        if (!error && data) {
+          currentTotal = Number(data.value) + 1;
+          await supabase
+            .from('site_stats')
+            .update({ value: currentTotal })
+            .eq('name', 'total_visits');
+        } else {
+          console.error("Supabase error fetching visits:", error);
+        }
+      } catch (err) {
+        console.error("Error updating Supabase:", err);
+      }
+    }
 
     if (!token || !chatId) {
       console.warn("Telegram credentials not configured");
-      return res.status(200).json({ status: "skipped", reason: "no_credentials", currentTotal: visits.total });
+      return res.status(200).json({ status: "skipped", reason: "no_credentials", currentTotal });
     }
 
     try {
-      const message = `Visita Nueva MAN 🔥 (${visits.total})`;
+      const message = `Visita Nueva MAN 🔥 (${currentTotal})`;
       
       await axios.post(`https://api.telegram.org/bot${token}/sendMessage`, {
         chat_id: chatId,
         text: message,
       });
       
-      res.json({ status: "ok", total: visits.total });
+      res.json({ status: "ok", total: currentTotal });
     } catch (error: any) {
       console.error("Error sending Telegram message:", error.response?.data || error.message);
       res.status(500).json({ error: "Failed to send notification" });
