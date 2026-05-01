@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import axios from "axios";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // CORS headers
@@ -64,13 +65,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const message = `Visita Nueva MAN 🔥 (${currentTotal || '1'})`;
       const telegramUrl = `https://api.telegram.org/bot${token}/sendMessage`;
       
-      await fetch(telegramUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: message,
-        }),
+      await axios.post(telegramUrl, {
+        chat_id: chatId,
+        text: message,
       });
       console.log("Telegram message sent");
     } catch (e: any) {

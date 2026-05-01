@@ -1,97 +1,41 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Bebas+Neue&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Space+Grotesk:wght@300;400;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Bebas Neue", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
-  --font-serif: "Playfair Display", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-
-  --color-brand-brown: #BCAAA4;
-  --color-brand-brown-dark: #8D6E63;
+  --font-display: "Space Grotesk", sans-serif;
+  
   --color-brand-black: #000000;
-  --color-brand-gray: #111111;
-  --color-brand-gray-light: #222222;
-  --color-brand-bone: #FFFFFF;
+  --color-brand-gray-dark: #1A1A1A;
+  --color-brand-gray: #333333;
+  --color-brand-gray-light: #A3A3A3;
+  --color-brand-white: #FFFFFF;
 }
 
 @layer base {
   body {
-    @apply bg-brand-black text-white selection:bg-white selection:text-black leading-relaxed;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  h1, h2, h3, h4 {
-    @apply font-display tracking-tight text-white uppercase leading-none;
+    @apply bg-black text-white antialiased selection:bg-white selection:text-black;
   }
 }
 
-.rustic-grain {
-  position: relative;
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-linear-to-b from-white to-neutral-500;
 }
 
-.rustic-grain::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  opacity: 0.04;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  z-index: 9999;
+.glass {
+  @apply bg-white/5 backdrop-blur-lg border border-white/10;
 }
 
-.btn-brutal {
-  @apply w-full flex items-center justify-center py-6 px-6 bg-white text-black font-display text-3xl tracking-wide transition-all duration-300 border-2 border-brand-brown rounded-2xl;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
 }
-
-.btn-brutal:hover, .btn-brutal:active {
-  @apply bg-brand-brown/10 text-white rounded-2xl;
+::-webkit-scrollbar-track {
+  @apply bg-black;
 }
-
-.brutal-border {
-  @apply border border-white/20;
+::-webkit-scrollbar-thumb {
+  @apply bg-neutral-800 rounded-full;
 }
-
-/* Video Placeholder */
-.video-placeholder {
-  @apply relative w-full aspect-video bg-brand-gray flex flex-col items-center justify-center border border-white/10 overflow-hidden cursor-pointer;
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-neutral-700;
 }
-
-.video-placeholder::after {
-  content: '';
-  @apply absolute inset-0 bg-black/40 transition-opacity duration-300;
-}
-
-.video-placeholder:hover::after {
-  @apply bg-black/20;
-}
-
-@keyframes scroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(calc(-50% - 0.75rem)); /* accounting for gap */
-  }
-}
-
-.gold-text {
-  background: linear-gradient(to right, #bf953f, #fcf6ba, #bf953f, #fbf5b7, #bf953f);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  background-size: 200% auto;
-  animation: shine 3s linear infinite;
-}
-
-@keyframes shine {
-  to {
-    background-position: 200% center;
-  }
-}
-
-

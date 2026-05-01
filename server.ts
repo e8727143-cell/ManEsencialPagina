@@ -49,7 +49,8 @@ async function startServer() {
           .single();
         
         if (!error && data) {
-          currentTotal = Number(data.value) + 1;
+          const val = parseInt(String(data.value), 10);
+          currentTotal = (isNaN(val) ? 0 : val) + 1;
           await supabase
             .from('site_stats')
             .update({ value: currentTotal })
