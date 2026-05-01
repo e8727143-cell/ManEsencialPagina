@@ -91,7 +91,7 @@ export default function App() {
 
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-black font-sans selection:bg-white selection:text-black">
-      <main className="w-full max-w-[480px] px-6 py-12 space-y-24 md:max-w-[1080px]">
+      <main className="w-full max-w-[480px] px-6 py-8 space-y-16 md:max-w-[1080px]">
         
         {/* HERO SECTION */}
         <section id="hero" className="flex flex-col items-center text-center space-y-8">
@@ -157,13 +157,13 @@ export default function App() {
         </section>
 
         {/* THE TRUTH / PAIN POINTS */}
-        <section className="space-y-12">
+        <section className="space-y-8">
           <motion.div 
             initial="hidden" 
             whileInView="visible" 
             viewport={{ once: true }}
             variants={staggerContainer}
-            className="space-y-6 text-center"
+            className="space-y-4"
           >
             <motion.h3 variants={fadeIn} className="text-3xl md:text-5xl font-black font-display leading-[0.9] tracking-tighter uppercase">
               PERFIL DE <span className="text-white underline decoration-neutral-700 underline-offset-8">DEPREDADOR</span> 
@@ -191,12 +191,12 @@ export default function App() {
         </section>
 
         {/* BULLISH WARNING SECTION */}
-        <section className="p-8 border border-white/10 rounded-3xl bg-neutral-900/40 space-y-8 relative overflow-hidden">
+        <section className="p-6 border border-white/10 rounded-3xl bg-neutral-900/40 space-y-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4">
              <AlertCircle className="w-24 h-24 text-white/[0.03] -rotate-12" />
           </div>
           
-          <div className="space-y-4">
+          <div className="space-y-2">
             <h4 className="text-xl md:text-2xl font-black font-display uppercase tracking-tight text-white max-w-[280px] mx-auto text-center">
               TU PERFIL PROBABLEMENTE <br /> ESTÁ HACIENDO ESTO:
             </h4>
@@ -225,9 +225,9 @@ export default function App() {
         </section>
 
         {/* WHAT'S INSIDE / FEATURES */}
-        <section className="space-y-12">
-          <div className="space-y-2 text-center">
-            <LockOpen className="w-8 h-8 text-neutral-700 mx-auto mb-4" />
+        <section className="space-y-8">
+          <div className="space-y-1 text-center">
+            <LockOpen className="w-8 h-8 text-neutral-700 mx-auto mb-2" />
             <h2 className="text-2xl font-black font-display uppercase leading-tight tracking-tighter md:text-5xl mx-auto">
               DENTRO DE PERFIL DE DEPREDADOR <br /> VAS A DESCUBRIR:
             </h2>
@@ -262,7 +262,7 @@ export default function App() {
         </section>
 
         {/* PHILOSOPHY / TARGET AUDIENCE */}
-        <section className="space-y-12 py-12 border-y border-white/5">
+        <section className="space-y-8 py-8 border-y border-white/5">
           <div className="space-y-8 max-w-2xl mx-auto text-center">
             <p className="text-2xl font-bold italic text-neutral-500">
               Este ebook no fue escrito para hombres sensibles.
@@ -291,7 +291,7 @@ export default function App() {
         </section>
 
         {/* FINAL CLOSING PARAGRAPH */}
-        <section className="text-center space-y-8">
+        <section className="text-center space-y-6">
            <div className="space-y-4 max-w-lg mx-auto">
              <p className="text-lg font-medium text-neutral-400">
                Puedes seguir siendo otro hombre invisible desplazándose por historias ajenas…
@@ -303,7 +303,7 @@ export default function App() {
         </section>
 
         {/* PRICING & CHECKOUT */}
-        <section id="checkout" className="glass rounded-[40px] p-8 md:p-16 space-y-12 border-white/20 relative overflow-hidden bg-white/[0.01]">
+        <section id="checkout" className="glass rounded-[40px] p-6 md:p-12 space-y-8 border-white/20 relative overflow-hidden bg-white/[0.01]">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-white/10 rounded-full blur-[60px]" />
           
           <div className="text-center space-y-4 relative z-10">
@@ -349,22 +349,9 @@ export default function App() {
         </section>
 
         {/* FOOTER - CLEANER */}
-        <footer className="w-full text-center py-20 px-6 border-t border-white/5 bg-black">
-           <div className="max-w-2xl mx-auto space-y-10">
-              {/* Hotmart Purchase Button */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-              >
-                <a 
-                  href="https://pay.hotmart.com/YOUR_HOTMART_CODE" 
-                  className="inline-flex items-center justify-center w-full max-w-md py-6 text-xl font-black tracking-widest text-black uppercase transition-all duration-300 rounded-full bg-white border-2 border-white hover:bg-neutral-200 active:scale-95 group font-display"
-                >
-                  COMPRAR AHORA
-                  <ChevronRight className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                </a>
-              </motion.div>
+        <footer className="w-full text-center py-12 px-6 border-t border-white/5 bg-black">
+           <div className="max-w-2xl mx-auto opacity-20 text-[10px] uppercase tracking-widest text-neutral-500">
+              © {new Date().getFullYear()} PERFIL DE DEPREDADOR
            </div>
         </footer>
 
